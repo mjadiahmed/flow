@@ -1594,7 +1594,7 @@
         "order": 14,
         "width": 3,
         "height": 1,
-        "passthru": false,
+        "passthru": true,
         "outs": "end",
         "topic": "",
         "topicType": "str",
