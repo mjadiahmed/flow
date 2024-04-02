@@ -492,6 +492,32 @@
         "sessionExpiry": ""
     },
     {
+        "id": "24945b53bf771596",
+        "type": "mqtt-broker",
+        "name": "mosquitto",
+        "broker": "test.mosquitto.org",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
         "id": "3fe52603e2ac73b6",
         "type": "ui_template",
         "z": "829d803b6033a693",
@@ -1249,7 +1275,7 @@
         "type": "mqtt out",
         "z": "829d803b6033a693",
         "name": "RabbitMQ Status",
-        "topic": "SCANNER/STATUS",
+        "topic": "",
         "qos": "1",
         "retain": "",
         "respTopic": "",
@@ -1257,7 +1283,7 @@
         "userProps": "",
         "correl": "",
         "expiry": "",
-        "broker": "730c6a84d7313941",
+        "broker": "24945b53bf771596",
         "x": 390,
         "y": 400,
         "wires": []
@@ -1280,13 +1306,15 @@
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
-        "topic": "b827eb5ff16f/SCANNER_STATUS",
+        "topic": "b827eb5ff16f/SCANNER/Dynamic",
         "payload": "",
         "payloadType": "date",
         "x": 170,
         "y": 400,
         "wires": [
-            []
+            [
+                "dff64d729b2fb588"
+            ]
         ]
     },
     {
@@ -2288,7 +2316,7 @@
         "type": "function",
         "z": "1613373abaf77a2c",
         "name": "write",
-        "func": "var file = 'status_internal_cam'\nlet fs = global.get('fs');\nvar filepath = '/home/pi/OpenScan/settings/';\n\ncontent = '--READY--'\n\nif (msg.payload.includes('Cannot open device')){\n    content = 'no camera found'\n}\n\nfs.writeFile(filepath + file, content, err => {\n  if (err) {\n    return msg\n  }\n  });\nreturn msg",
+        "func": "var file = 'status_internal_cam'\nlet fs = global.get('fs');\nvar filepath = '/home/pi/OpenScan/settings/';\n\ncontent = 'Routine-READY'\n\nif (msg.payload.includes('Cannot open device')){\n    content = 'no camera found'\n}\n\nfs.writeFile(filepath + file, content, err => {\n  if (err) {\n    return msg\n  }\n  });\nreturn msg",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -3341,7 +3369,7 @@
         "type": "function",
         "z": "1613373abaf77a2c",
         "name": "loadS",
-        "func": "var file = 'status_internal_cam'\nlet fs = global.get('fs');\nvar filepath = '/home/pi/OpenScan/settings/';\nconst data = fs.readFileSync(filepath+file, 'utf8');\nmsg.payload = String(data);\n\nif (data === 'no camera found'){\n    msg.color = 'red'\n}\n\nreturn msg\n\n",
+        "func": "var file = 'status_internal_cam'\nlet fs = global.get('fs');\nvar filepath = '/home/pi/OpenScan/settings/';\nconst data = fs.readFileSync(filepath+file, 'utf8');\nmsg.payload = String(data);\n\nmsg.topic = \"SCANNER/STATUS\";\n// b827eb5ff16f/\nif (data === 'no camera found'){\n    msg.color = 'red'\n}\n\nreturn msg\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -3717,7 +3745,7 @@
         "type": "function",
         "z": "1613373abaf77a2c",
         "name": "",
-        "func": "if(msg.payload==\"start\")\n{msg.payload=\"a\";\n    return msg;\n    \n}",
+        "func": "var file = 'status_internal_cam'\nlet fs = global.get('fs');\nvar filepath = '/home/pi/OpenScan/settings/';\nconst data = fs.readFileSync(filepath+file, 'utf8');\n\n\nif(msg.payload==\"start\" && data==\"Routine-READY\")\n{msg.payload=\"a\";\n    return msg;\n    \n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -3776,7 +3804,7 @@
         "z": "1613373abaf77a2c",
         "name": "",
         "topic": "SCANNER/COMMAND",
-        "qos": "1",
+        "qos": "2",
         "datatype": "auto",
         "broker": "730c6a84d7313941",
         "nl": false,
@@ -3784,7 +3812,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 180,
-        "y": 2420,
+        "y": 2200,
         "wires": [
             [
                 "765a1998983a5d71"
@@ -3796,7 +3824,7 @@
         "type": "mqtt out",
         "z": "1613373abaf77a2c",
         "name": "",
-        "topic": "SCANNER/ACK_CMD",
+        "topic": "",
         "qos": "1",
         "retain": "false",
         "respTopic": "",
@@ -3805,8 +3833,8 @@
         "correl": "",
         "expiry": "",
         "broker": "730c6a84d7313941",
-        "x": 580,
-        "y": 2420,
+        "x": 650,
+        "y": 2200,
         "wires": []
     },
     {
@@ -3814,14 +3842,14 @@
         "type": "function",
         "z": "1613373abaf77a2c",
         "name": "ACK_CMD",
-        "func": "if(msg.payload!=\"\")\n{\n    msg.payload=1;\n    msg.topic=\"SCANNER/ACK_CMD\";\n    return msg;\n    \n}",
+        "func": "var file = 'status_internal_cam'\nlet fs = global.get('fs');\nvar filepath = '/home/pi/OpenScan/settings/';\nconst data = fs.readFileSync(filepath+file, 'utf8');\n\nif(msg.payload==\"start\" && data==\"Routine-READY\")\n{\n    msg.payload=1;\n    msg.topic=\"SCANNER/ACK_CMD\";\n    return msg;\n    \n}\nelse if(msg.payload==\"pause\" || msg.payload==\"stop\" ){\n    msg.payload=1;\n    msg.topic=\"SCANNER/ACK_CMD\";\n    return msg;  \n}\n\nelse\n{\n    msg.payload=0;\n    return msg;  \n}",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 390,
-        "y": 2420,
+        "x": 450,
+        "y": 2200,
         "wires": [
             [
                 "378cc30d7e2bbaeb"
@@ -3857,7 +3885,7 @@
         "type": "mqtt out",
         "z": "1613373abaf77a2c",
         "name": "",
-        "topic": "SCANNER/ACK_CFG",
+        "topic": "",
         "qos": "1",
         "retain": "false",
         "respTopic": "",
@@ -3866,7 +3894,7 @@
         "correl": "",
         "expiry": "",
         "broker": "730c6a84d7313941",
-        "x": 540,
+        "x": 490,
         "y": 840,
         "wires": []
     },
@@ -3982,7 +4010,7 @@
         "type": "mqtt out",
         "z": "1613373abaf77a2c",
         "name": "RabbitMQ Status",
-        "topic": "SCANNER/STATUS",
+        "topic": "",
         "qos": "1",
         "retain": "",
         "respTopic": "",
@@ -11763,11 +11791,11 @@
         "width": 0,
         "height": 0,
         "name": "",
-        "label": "symphony version  29032024",
+        "label": "symphony version  29032024 dynTopi",
         "format": "{{msg.payload}}",
         "layout": "row-center",
         "className": "",
-        "x": 560,
+        "x": 590,
         "y": 1020,
         "wires": []
     }
