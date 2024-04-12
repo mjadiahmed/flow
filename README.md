@@ -8,22 +8,45 @@ TO DO:
 
 
 
-# auto startup Node-Red
-sudo nano /etc/systemd/system/nodered.service
+# Setting Up Node-RED and Flask Services on Raspberry Pi
 
-[Unit]
-Description=Node-RED
+This guide outlines how to set up Node-RED and Flask services using `systemd` on a Raspberry Pi, as well as installing the `gphoto2` Python module.
 
-[Service]
-ExecStart=node-red
-Restart=always
-RestartSec=10
-User=root
-Environment=NODE_ENV=production
+## Node-RED Service Setup
 
-[Install]
-WantedBy=multi-user.target
+### Create the systemd service file for Node-RED
 
-sudo systemctl enable nodered.service
+1. Create a new systemd service file for Node-RED:
+
+    ```bash
+    sudo nano /etc/systemd/system/nodered.service
+    ```
+
+2. Add the following content to the file:
+
+    ```ini
+    [Unit]
+    Description=Node-RED
+
+    [Service]
+    ExecStart=/usr/bin/env node-red
+    Restart=always
+    RestartSec=10
+    User=pi
+    Environment=NODE_ENV=production
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+3. Save the file and exit the text editor.
+
+### Reload systemd configuration
+
+Reload the systemd configuration to apply the changes:
+
+```bash
+sudo systemctl daemon-reload
+
 sudo systemctl daemon-reload
 sudo nano /etc/systemd/system/flask.service
