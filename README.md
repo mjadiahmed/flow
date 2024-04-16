@@ -51,6 +51,10 @@ Reload the systemd configuration to apply the changes:
 
 ```bash
 sudo systemctl daemon-reload
-
+sudo systemctl enable nodered.service
+sudo systemctl start nodered.service
+```
+```bash
 sudo systemctl daemon-reload
 sudo nano /etc/systemd/system/flask.service
+```
