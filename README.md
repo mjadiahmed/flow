@@ -4,6 +4,8 @@
 
  ```
  sudo pip3 install boto3 rpi_ws281x adafruit-circuitpython-neopixel adafruit-blinka
+ sudo pip3 install rpi.gpio fastapi uvicorn gphoto2 v4l2py pillow numpy picamera2 orjson python-dotenv matplotlib
+
 ```
 
 
